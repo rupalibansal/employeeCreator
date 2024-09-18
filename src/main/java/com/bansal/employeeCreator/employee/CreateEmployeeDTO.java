@@ -10,8 +10,12 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Pattern;
 import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
 @Data
+@ToString
+@NoArgsConstructor
 public class CreateEmployeeDTO {
 
     @NotBlank
@@ -24,11 +28,11 @@ public class CreateEmployeeDTO {
     @Length(min = 3, max = 50)
     private String lastName;
 
-    @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")
+    // @Pattern(regexp = "^[a-zA-Z0-9+_.-]+@[a-zA-Z0-9.-]+$")
     private String email;
 
     // Australian phone number regex
-    @Pattern(regexp = "^(?:\\+61\\s?4\\d{2}\\s?\\d{3}\\s?\\d{3}|0[2-9]\\d{8})$")
+    // @Pattern(regexp = "^(?:\\+61\\s?4\\d{2}\\s?\\d{3}\\s?\\d{3}|0[2-9]\\d{8})$")
     private String phoneNumber;
 
     @NotNull
@@ -36,7 +40,7 @@ public class CreateEmployeeDTO {
 
     @NotNull
     @Min(1)
-    private Department department_id;
+    private Long department_id;
 
     @NotNull
     private Date startDate;

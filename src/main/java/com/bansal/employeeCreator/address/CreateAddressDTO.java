@@ -1,7 +1,13 @@
 package com.bansal.employeeCreator.address;
 
 import jakarta.validation.constraints.NotBlank;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import lombok.ToString;
 
+@ToString
+@NoArgsConstructor
+@Data
 public class CreateAddressDTO {
 
     @NotBlank

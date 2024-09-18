@@ -39,6 +39,7 @@ public class EmployeeController {
     // /api/employees - Create a new employee
     @PostMapping
     public ResponseEntity<Employee> createEmployee(@Valid @RequestBody CreateEmployeeDTO data) throws Exception {
+        System.out.println("data = " + data.toString());
         Employee createdEmployee = this.employeeService.createEmployee(data);
         return new ResponseEntity<Employee>(createdEmployee, HttpStatus.CREATED);
     }

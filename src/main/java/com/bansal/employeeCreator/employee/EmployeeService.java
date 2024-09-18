@@ -2,9 +2,12 @@ package com.bansal.employeeCreator.employee;
 
 import java.util.List;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.bansal.employeeCreator.address.Address;
+import com.bansal.employeeCreator.address.AddressRepository;
 import com.bansal.employeeCreator.common.ValidationErrors;
 import com.bansal.employeeCreator.common.exceptions.ServiceValidationException;
 import com.bansal.employeeCreator.department.DepartmentRepository;
@@ -18,7 +21,13 @@ public class EmployeeService {
     private EmployeeRepository employeeRepository;
 
     @Autowired
+    private AddressRepository addressRepository;
+
+    @Autowired
     private DepartmentRepository departmentRepository;
+
+    @Autowired
+    private ModelMapper modelMapper;
 
     public List<Employee> findAll() {
         return this.employeeRepository.findAll();
@@ -31,31 +40,20 @@ public class EmployeeService {
 
     public Employee createEmployee(@Valid CreateEmployeeDTO data) throws ServiceValidationException {
         ValidationErrors errors = new ValidationErrors();
-        Employee newEmployee = new Employee();
-        return this.employeeRepository.save(newEmployee);
+        // Map CreateEmployeeDTO to Employee entity
+        Employee newEmployee = modelMapper.map(data, Employee.class);
 
-    }
+        System.out.println("data.getaddress() = " + data.toString());
+        // Extract and save address details
+        Address address = modelMapper.map(data.getAddress(), Address.class);
+        Address savedAddress = addressRepository.save(address);
 
-    public Todo createToDo(@Valid CreateTodoDTO data) throws ServiceValidationException {
+        // Link address to employee
+        newEmployee.setAddress(savedAddress);
 
-        ValidationErrors errors = new ValidationErrors();
-        // Todo newToDo = mapper.map(data, Todo.class);
-        Todo newToDo = new Todo();
-        newToDo.setName(data.getName());
-        Optional<Category> categoryResult = this.categoryService.findById(data.getCategoryId());
+        // Save employee
+        return employeeRepository.save(newEmployee);
 
-        if (categoryResult.isEmpty()) {
-            errors.addError("category", String.format("Category with id %s does not exist", data.getCategoryId()));
-        } else {
-            newToDo.setCategory(categoryResult.get());
-        }
-
-        if (errors.hasErrors()) {
-            throw new ServiceValidationException(errors);
-        }
-
-        
-        return this.todoRepository.save(newToDo);
     }
 
 }
