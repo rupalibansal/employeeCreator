@@ -25,7 +25,7 @@ public class Department {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "department_name")
+    @Column(name = "department_name", unique = true)
     private String departmentName;
 
     @OneToMany(mappedBy = "department")

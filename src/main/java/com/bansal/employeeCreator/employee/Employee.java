@@ -34,13 +34,13 @@ public class Employee {
     @Column
     private String firstName;
 
-    @Column
+    @Column(nullable = true)
     private String middleName;
 
     @Column
     private String lastName;
 
-    @Column
+    @Column(unique = true)
     private String email;
 
     @Column
@@ -58,4 +58,7 @@ public class Employee {
 
     @Column
     private Date startDate;
+
+    @Column(columnDefinition = "boolean default false")
+    private Boolean isPermanent;
 }
