@@ -61,4 +61,6 @@ public class Employee {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean isPermanent;
+
+    
 }
