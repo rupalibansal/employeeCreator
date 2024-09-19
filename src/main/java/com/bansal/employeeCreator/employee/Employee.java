@@ -1,5 +1,6 @@
 package com.bansal.employeeCreator.employee;
 
+import jakarta.persistence.CascadeType;
 import jakarta.persistence.Column;
 import jakarta.persistence.Entity;
 import jakarta.persistence.GeneratedValue;
@@ -46,8 +47,8 @@ public class Employee {
     @Column
     private String phoneNumber;
 
-    @OneToOne
-    @JoinColumn(name = "address_id")
+    @OneToOne(cascade = CascadeType.ALL, orphanRemoval = true)
+    @JoinColumn(name = "address_id", referencedColumnName = "id")
     @JsonIgnoreProperties("employee")
     private Address address;
 
@@ -62,5 +63,4 @@ public class Employee {
     @Column(columnDefinition = "boolean default false")
     private Boolean isPermanent;
 
-    
 }

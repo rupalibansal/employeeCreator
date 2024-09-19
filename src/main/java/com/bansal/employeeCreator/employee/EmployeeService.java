@@ -79,8 +79,20 @@ public class EmployeeService {
         return this.employeeRepository.findById(id);
     }
 
+    @Transactional
     public boolean deleteById(Long id) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteById'");
+
+        // get the employee with id from the repository
+        Optional<Employee> employee = this.employeeRepository.findById(id);
+        // if the employee exists, first delete the address from the address table
+        if (employee.isPresent()) {
+            Employee employeeToDelete = employee.get();
+            Address addressToDelete = employeeToDelete.getAddress();
+            this.addressRepository.delete(addressToDelete);
+            // then delete the employee from the employee table
+            this.employeeRepository.deleteById(id);
+        }
+        // returns true if the employee was found and deleted , false otherwise.
+        return employee.isPresent();
     }
 }
