@@ -30,19 +30,20 @@ public class EmployeeController {
     // /api/employees?department=HR - Get all employees in HR department
     // /api/employees?pageSize=10&pageNo=2 - Get 10 employees on page 2
     @GetMapping
-    public ResponseEntity<List<Employee>> findEmployeesByDepartment(
+    public ResponseEntity<Response> findEmployeesByDepartment(
             @RequestParam(name = "department", required = false) String department,
             @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
             @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
+        Response response = new Response();
         if (department == null) {
             // If no department_id is provided, return all employees
-            List<Employee> employees = this.employeeService.findAll(pageNo, pageSize);
-            return new ResponseEntity<List<Employee>>(employees, HttpStatus.OK);
+            response = this.employeeService.findAll(pageNo, pageSize);
+            return new ResponseEntity<Response>(response, HttpStatus.OK);
         } else {
             // If department is provided, return employees filtered by department
-            List<Employee> employeesByDepartment = this.employeeService.findEmployeesByDepartment(department, pageNo,
+            response = this.employeeService.findEmployeesByDepartment(department, pageNo,
                     pageSize);
-            return new ResponseEntity<List<Employee>>(employeesByDepartment, HttpStatus.OK);
+            return new ResponseEntity<Response>(response, HttpStatus.OK);
         }
     }
 

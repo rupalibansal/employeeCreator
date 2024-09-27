@@ -32,19 +32,33 @@ public class EmployeeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<Employee> findAll(int pageNo, int pageSize) {
+    public Response findAll(int pageNo, int pageSize) {
         // Step1: Create the Pageable object
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         // Step2: Retrieve the Page object
         Page<Employee> employees = this.employeeRepository.findAll(pageable);
         // Step3: Convert Page to List and return
-        return employees.getContent();
+        Response response = new Response();
+        response.setPageNo(employees.getNumber());
+        response.setPageSize(employees.getSize());
+        response.setTotalPages(employees.getTotalPages());
+        response.setTotalRecords(employees.getTotalElements());
+        response.setLast(employees.isLast());
+        response.setEmployees(employees.getContent());
+        return response;
     }
 
-    public List<Employee> findEmployeesByDepartment(String department, int pageNo, int pageSize) {
+    public Response findEmployeesByDepartment(String department, int pageNo, int pageSize) {
         Pageable pageable = PageRequest.of(pageNo, pageSize);
         Page<Employee> employees = this.employeeRepository.findByDepartmentName(department, pageable);
-        return employees.getContent();
+        Response response = new Response();
+        response.setPageNo(employees.getNumber());
+        response.setPageSize(employees.getSize());
+        response.setTotalPages(employees.getTotalPages());
+        response.setTotalRecords(employees.getTotalElements());
+        response.setLast(employees.isLast());
+        response.setEmployees(employees.getContent());
+        return response;
     }
 
     @Transactional
