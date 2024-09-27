@@ -26,18 +26,22 @@ public class EmployeeController {
     @Autowired
     private EmployeeService employeeService;
 
-    // Get all employees from the database
+    // /api/employees - Get all employees from the database
     // /api/employees?department=HR - Get all employees in HR department
+    // /api/employees?pageSize=10&pageNo=2 - Get 10 employees on page 2
     @GetMapping
     public ResponseEntity<List<Employee>> findEmployeesByDepartment(
-            @RequestParam(name = "department", required = false) String department) {
+            @RequestParam(name = "department", required = false) String department,
+            @RequestParam(name = "pageNo", defaultValue = "0", required = false) int pageNo,
+            @RequestParam(name = "pageSize", defaultValue = "10", required = false) int pageSize) {
         if (department == null) {
             // If no department_id is provided, return all employees
-            List<Employee> employees = this.employeeService.findAll();
+            List<Employee> employees = this.employeeService.findAll(pageNo, pageSize);
             return new ResponseEntity<List<Employee>>(employees, HttpStatus.OK);
         } else {
-            // If categoryId is provided, return todos filtered by category
-            List<Employee> employeesByDepartment = this.employeeService.findEmployeesByDepartment(department);
+            // If department is provided, return employees filtered by department
+            List<Employee> employeesByDepartment = this.employeeService.findEmployeesByDepartment(department, pageNo,
+                    pageSize);
             return new ResponseEntity<List<Employee>>(employeesByDepartment, HttpStatus.OK);
         }
     }
@@ -74,5 +78,3 @@ public class EmployeeController {
 }
 
 // /api/employees/{id} - Update employee by id
-
-// /api/employees?pagesize=10&page=2 - Get 10 employees on page 2

@@ -2,18 +2,18 @@ package com.bansal.employeeCreator.employee;
 
 import java.util.List;
 import java.util.Optional;
-
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-
 import com.bansal.employeeCreator.address.Address;
 import com.bansal.employeeCreator.address.AddressRepository;
 import com.bansal.employeeCreator.common.ValidationErrors;
 import com.bansal.employeeCreator.common.exceptions.ServiceValidationException;
 import com.bansal.employeeCreator.department.Department;
 import com.bansal.employeeCreator.department.DepartmentRepository;
-
 import jakarta.transaction.Transactional;
 import jakarta.validation.Valid;
 
@@ -32,13 +32,19 @@ public class EmployeeService {
     @Autowired
     private ModelMapper modelMapper;
 
-    public List<Employee> findAll() {
-        return this.employeeRepository.findAll();
-
+    public List<Employee> findAll(int pageNo, int pageSize) {
+        // Step1: Create the Pageable object
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        // Step2: Retrieve the Page object
+        Page<Employee> employees = this.employeeRepository.findAll(pageable);
+        // Step3: Convert Page to List and return
+        return employees.getContent();
     }
 
-    public List<Employee> findEmployeesByDepartment(String department) {
-        return this.employeeRepository.findByDepartmentName(department);
+    public List<Employee> findEmployeesByDepartment(String department, int pageNo, int pageSize) {
+        Pageable pageable = PageRequest.of(pageNo, pageSize);
+        Page<Employee> employees = this.employeeRepository.findByDepartmentName(department, pageable);
+        return employees.getContent();
     }
 
     @Transactional
@@ -86,10 +92,14 @@ public class EmployeeService {
         Optional<Employee> employee = this.employeeRepository.findById(id);
         // if the employee exists, first delete the address from the address table
         if (employee.isPresent()) {
-            Employee employeeToDelete = employee.get();
-            Address addressToDelete = employeeToDelete.getAddress();
-            this.addressRepository.delete(addressToDelete);
+
+            // commented below lines as the address will be deleted automatically
+
+            // Employee employeeToDelete = employee.get();
+            // Address addressToDelete = employeeToDelete.getAddress();
+            // this.addressRepository.delete(addressToDelete);
             // then delete the employee from the employee table
+
             this.employeeRepository.deleteById(id);
         }
         // returns true if the employee was found and deleted , false otherwise.
