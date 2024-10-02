@@ -66,6 +66,9 @@ public class EmployeeService {
 
         // Validate department ID
         Department department = validateDepartment(data.getDepartment_id(), errors);
+        if (errors.hasErrors()) {
+            throw new ServiceValidationException(errors);
+        }
         // Map CreateEmployeeDTO to Employee entity
         Employee newEmployee = modelMapper.map(data, Employee.class);
         // Set department
@@ -76,9 +79,7 @@ public class EmployeeService {
         // Link address to employee
         newEmployee.setAddress(savedAddress);
         // Check for validation errors
-        if (errors.hasErrors()) {
-            throw new ServiceValidationException(errors);
-        }
+
         // Save employee
         return employeeRepository.save(newEmployee);
     }
@@ -117,5 +118,30 @@ public class EmployeeService {
         }
         // returns true if the employee was found and deleted , false otherwise.
         return employee.isPresent();
+    }
+
+    public Optional<Employee> updateEmployeeById(Long id, @Valid UpdateEmployeeDTO data) {
+
+        Optional<Employee> optionalEmployee = this.employeeRepository.findById(id);
+        if (optionalEmployee.isPresent()) {
+            Employee foundEmployee = optionalEmployee.get();
+            modelMapper.map(data, foundEmployee);
+
+            // Update the address details
+            if (data.getAddress() != null) {
+                modelMapper.map(data.getAddress(), foundEmployee.getAddress());
+            }
+
+            // Update the department
+            if (data.getDepartment_id() != null) {
+                Department department = departmentRepository.findById(data.getDepartment_id())
+                        .orElseThrow(() -> new RuntimeException("Department not found"));
+                foundEmployee.setDepartment(department);
+            }
+            // Save the updated employee
+            return Optional.of(employeeRepository.save(foundEmployee));
+        } else {
+            return Optional.empty();
+        }
     }
 }

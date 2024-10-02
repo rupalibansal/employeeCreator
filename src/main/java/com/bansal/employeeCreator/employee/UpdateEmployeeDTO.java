@@ -1,8 +1,7 @@
 package com.bansal.employeeCreator.employee;
 
 import java.util.Date;
-
-import com.bansal.employeeCreator.address.CreateAddressDTO;
+import com.bansal.employeeCreator.address.UpdateAddressDTO;
 
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -22,7 +21,7 @@ public class UpdateEmployeeDTO {
 
     private String phoneNumber;
 
-    private CreateAddressDTO address;
+    private UpdateAddressDTO address;
     private Long department_id;
     private Date startDate;
     private Boolean isPermanent;

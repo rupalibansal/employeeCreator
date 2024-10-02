@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -76,6 +77,15 @@ public class EmployeeController {
 
     }
 
-}
+    // /api/employees/{id} - Update employee by id
+    @PatchMapping("/{id}")
+    public ResponseEntity<Employee> updateEmployeeById(@PathVariable Long id,
+            @Valid @RequestBody UpdateEmployeeDTO data)
+            throws NotFoundException {
+        Optional<Employee> result = this.employeeService.updateEmployeeById(id, data);
+        Employee updatedEmployee = result
+                .orElseThrow(() -> new NotFoundException("Could not find Employee with id " + id));
+        return new ResponseEntity<>(updatedEmployee, HttpStatus.OK);
 
-// /api/employees/{id} - Update employee by id
+    }
+}
