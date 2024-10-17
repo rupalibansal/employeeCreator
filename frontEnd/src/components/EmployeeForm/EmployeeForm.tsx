@@ -172,8 +172,9 @@ const EmployeeForm = () => {
                     Submit
                   </Button>
                   <Button
-                    type="submit"
+                    type="button"
                     variant="contained"
+                    onClick={() => reset()}
                     sx={{
                       backgroundColor: "#6a1b9a",
                       "&:hover": { backgroundColor: "#4a148c" },
