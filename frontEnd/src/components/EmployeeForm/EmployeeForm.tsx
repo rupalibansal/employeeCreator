@@ -77,73 +77,115 @@ const EmployeeForm = () => {
       >
         <Box sx={{ width: "100%", maxWidth: 700, padding: 4, borderRadius: 2 }}>
           <Paper elevation={3} sx={{ width: "100%", padding: 4 }}>
-            <Typography variant="h4" component="h1" gutterBottom>
-              Employee Form
+            <Typography
+              variant="h4"
+              component="h1"
+              gutterBottom
+              sx={{
+                fontWeight: "bold",
+                padding: 2,
+                borderBottom: "2px solid #6a1b9a",
+                textAlign: "right",
+              }}
+            >
+              Employee Details
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Stack spacing={2}>
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Personal Details
+                </Typography>
                 <TextField
                   label="First Name"
+                  size="small"
                   {...register("firstName")}
                   error={!!errors.firstName}
                   helperText={errors.firstName?.message}
                 />
                 <TextField
-                  label="Middle Name"
+                  label="Middle Name (if applicable)"
+                  size="small"
                   {...register("middleName")}
                   error={!!errors.middleName}
                   helperText={errors.middleName?.message}
                 />
                 <TextField
                   label="Last Name"
+                  size="small"
                   {...register("lastName")}
                   error={!!errors.lastName}
                   helperText={errors.lastName?.message}
                 />
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Contact Details
+                </Typography>
                 <TextField
                   label="Email"
+                  size="small"
                   {...register("email")}
                   error={!!errors.email}
                   helperText={errors.email?.message}
                 />
                 <TextField
                   label="Phone Number"
+                  size="small"
                   {...register("phoneNumber")}
                   error={!!errors.phoneNumber}
                   helperText={errors.phoneNumber?.message}
                 />
                 <TextField
                   label="Street Address"
+                  size="small"
                   {...register("address.streetAddress")}
                   error={!!errors.address?.streetAddress}
                   helperText={errors.address?.streetAddress?.message}
                 />
                 <TextField
                   label="Suburb"
+                  size="small"
                   {...register("address.suburb")}
                   error={!!errors.address?.suburb}
                   helperText={errors.address?.suburb?.message}
                 />
                 <TextField
                   label="Postal Code"
+                  size="small"
                   {...register("address.postalCode")}
                   error={!!errors.address?.postalCode}
                   helperText={errors.address?.postalCode?.message}
                 />
                 <TextField
                   label="State"
+                  size="small"
                   {...register("address.state")}
                   error={!!errors.address?.state}
                   helperText={errors.address?.state?.message}
                 />
+                <Typography
+                  variant="h6"
+                  component="h2"
+                  sx={{ fontWeight: "bold" }}
+                >
+                  Employee Status
+                </Typography>
                 <TextField
                   label="Department"
+                  size="small"
                   {...register("department")}
                   error={!!errors.department}
                   helperText={errors.department?.message}
                 />
                 <TextField
                   label="Start Date"
+                  size="small"
                   type="date"
                   InputLabelProps={{ shrink: true }}
                   {...register("startDate")}

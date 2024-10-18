@@ -2,15 +2,20 @@
 // import ZodYouTubeForm from "./components/EmployeeForm/ZodYouTubeForm";
 // import { LoginForm } from "./components/LoginForm/LoginForm";
 
-import EmployeeForm from "./components/EmployeeForm/EmployeeForm";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
+import HomePage from "./pages/HomePage/HomePage";
 
 function App() {
   return (
     <>
+      <BrowserRouter>
+        <Routes>
+          <Route path="/" element={<HomePage />}></Route>
+        </Routes>
+      </BrowserRouter>
       {/* <YouTubeForm /> */}
       {/* <ZodYouTubeForm /> */}
       {/* <LoginForm /> */}
-      <EmployeeForm />
     </>
   );
 }
