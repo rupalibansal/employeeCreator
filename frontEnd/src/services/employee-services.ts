@@ -1,4 +1,4 @@
-import { EmployeeFormValues } from "./employeeSchema";
+import { EmployeeFormValues } from "../components/EmployeeForm/employeeSchema";
 const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
 
 export interface Address {
@@ -14,7 +14,7 @@ export interface Department {
   departmentName: string;
 }
 
-export interface Employee {
+export interface EmployeeDetails {
   id: number;
   firstName: string;
   middleName?: string;
@@ -39,7 +39,9 @@ export const getAllEmployees = async () => {
     if (!response.ok) {
       throw new Error(`Failed to fetch data :${response.statusText}`);
     }
-    return (await response.json()) as Employee[];
+    return (await response.json()) as {
+      employees: EmployeeDetails[];
+    };
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch data");
@@ -61,7 +63,7 @@ export const getEmployeeById = async (id: number) => {
     }
     throw new Error("Something went wrong");
   }
-  return (await response.json()) as Employee;
+  return (await response.json()) as EmployeeDetails;
 };
 
 export const getEmployeeByDepartment = async (department: string) => {
@@ -78,7 +80,7 @@ export const getEmployeeByDepartment = async (department: string) => {
   if (!response.ok) {
     throw new Error("Failed to get Employees by Department");
   }
-  return (await response.json()) as Employee[];
+  return (await response.json()) as EmployeeDetails[];
 };
 
 export const deleteEmployeeById = async (id: number) => {
@@ -107,7 +109,7 @@ export const createEmployee = async (data: EmployeeFormValues) => {
   if (!response.ok) {
     throw new Error("Failed to create Employee Record");
   }
-  return (await response.json()) as Employee;
+  return (await response.json()) as EmployeeDetails;
 };
 
 export const updateEmployeeById = async (
@@ -125,5 +127,5 @@ export const updateEmployeeById = async (
   if (!response.ok) {
     throw new Error("Something went wrong");
   }
-  return (await response.json()) as Employee;
+  return (await response.json()) as EmployeeDetails;
 };

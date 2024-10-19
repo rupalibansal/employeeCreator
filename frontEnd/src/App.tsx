@@ -3,7 +3,7 @@
 // import { LoginForm } from "./components/LoginForm/LoginForm";
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
-import HomePage from "./pages/HomePage/HomePage";
+import { HomePage } from "./pages/HomePage/HomePage";
 
 function App() {
   return (
