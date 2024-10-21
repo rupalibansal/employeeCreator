@@ -22,7 +22,7 @@ export interface EmployeeDetails {
   email: string;
   phoneNumber: string;
   address: Address;
-  department: Department;
+  department_id: Department;
   startDate: string;
   isPermanent: boolean;
 }
@@ -128,4 +128,18 @@ export const updateEmployeeById = async (
     throw new Error("Something went wrong");
   }
   return (await response.json()) as EmployeeDetails;
+};
+
+export const getAllDepartments = async () => {
+  const response = await fetch(`${baseURL}/api/departments`, {
+    method: "GET",
+    headers: {
+      "Content-Type": "application/json",
+      Accept: "application/json",
+    },
+  });
+  if (!response.ok) {
+    throw new Error("Failed to fetch Departments");
+  }
+  return (await response.json()) as Department[];
 };

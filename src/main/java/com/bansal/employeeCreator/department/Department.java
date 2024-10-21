@@ -11,14 +11,12 @@ import jakarta.persistence.GeneratedValue;
 import jakarta.persistence.GenerationType;
 import jakarta.persistence.Id;
 import jakarta.persistence.OneToMany;
-import lombok.AllArgsConstructor;
+import jakarta.persistence.Table;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Entity
+@Table(name = "department")
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class Department {
 
     @Id
@@ -32,4 +30,8 @@ public class Department {
     @JsonIgnoreProperties("department")
     private List<Employee> employees;
 
+    @Override
+    public String toString() {
+        return "Department [name=" + departmentName + "]";
+    }
 }

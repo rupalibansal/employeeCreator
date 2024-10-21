@@ -4,6 +4,7 @@
 
 import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { HomePage } from "./pages/HomePage/HomePage";
+import EmployeeForm from "./components/EmployeeForm/EmployeeForm";
 
 function App() {
   return (
@@ -11,6 +12,7 @@ function App() {
       <BrowserRouter>
         <Routes>
           <Route path="/" element={<HomePage />}></Route>
+          <Route path="/employee/new" element={<EmployeeForm />}></Route>
         </Routes>
       </BrowserRouter>
       {/* <YouTubeForm /> */}

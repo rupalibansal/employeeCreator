@@ -8,7 +8,7 @@ export const employeeSchema = z.object({
   email: z.string().nonempty("Email is required").email("Invalid Email format"),
   phoneNumber: z.string().nonempty("Phone Number is required"),
   address: addressSchema,
-  department: z.string().nonempty("Department is required"),
+  department_id: z.number(),
   startDate: z.string().nonempty("Start Date is required"),
   isPermanent: z.boolean(),
 });

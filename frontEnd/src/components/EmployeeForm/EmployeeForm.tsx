@@ -1,4 +1,4 @@
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { employeeSchema, EmployeeFormValues } from "./employeeSchema";
 import { DevTool } from "@hookform/devtools";
@@ -14,10 +14,29 @@ import {
   Box,
   CssBaseline,
   GlobalStyles,
+  FormControl,
+  InputLabel,
+  Select,
+  MenuItem,
+  SelectChangeEvent,
 } from "@mui/material";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
+import {
+  createEmployee,
+  Department,
+  getAllDepartments,
+} from "../../services/employee-services";
+import { useNavigate } from "react-router-dom";
 
 const EmployeeForm = () => {
+  const navigate = useNavigate();
+
+  const [departments, setDepartments] = useState<Department[]>([]);
+  const [departmentId, setDepartmentId] = useState<number>(1);
+  useEffect(() => {
+    getAllDepartments().then((data) => setDepartments(data));
+  }, []);
+
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
     mode: "all",
@@ -42,8 +61,14 @@ const EmployeeForm = () => {
   console.log("Form State", form);
   const { errors, isSubmitSuccessful } = formState;
 
+  const handleDepartmentChange = (event: SelectChangeEvent<number>) => {
+    setDepartmentId(event.target.value as number);
+  };
   const onSubmit = (data: EmployeeFormValues) => {
     console.log("Form Submitted", data);
+    createEmployee(data)
+      .then(() => navigate("/"))
+      .catch((e) => console.log(e));
   };
 
   useEffect(() => {
@@ -176,13 +201,44 @@ const EmployeeForm = () => {
                 >
                   Employee Status
                 </Typography>
-                <TextField
+                <FormControl fullWidth>
+                  <InputLabel id="department-label">Department</InputLabel>
+                  <Controller
+                    name="department_id"
+                    control={control}
+                    defaultValue={1}
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        labelId="department-label"
+                        value={field.value}
+                        onChange={(event) => {
+                          field.onChange(event);
+                        }}
+                        error={!!errors.department_id}
+                        label="Department"
+                      >
+                        {departments.map((department) => (
+                          <MenuItem key={department.id} value={department.id}>
+                            {department.departmentName}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.department_id && (
+                    <Typography variant="body2" color="error">
+                      {errors.department_id.message}
+                    </Typography>
+                  )}
+                </FormControl>
+                {/* <TextField
                   label="Department"
                   size="small"
                   {...register("department")}
                   error={!!errors.department}
                   helperText={errors.department?.message}
-                />
+                /> */}
                 <TextField
                   label="Start Date"
                   size="small"
