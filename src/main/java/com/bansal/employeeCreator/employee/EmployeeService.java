@@ -75,6 +75,7 @@ public class EmployeeService {
         newEmployee.setDepartment(department);
         // Extract and save address details
         Address address = modelMapper.map(data.getAddress(), Address.class);
+        System.out.println("address ajay : " + address.toString());
         Address savedAddress = addressRepository.save(address);
         // Link address to employee
         newEmployee.setAddress(savedAddress);

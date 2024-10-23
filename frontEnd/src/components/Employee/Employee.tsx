@@ -21,7 +21,7 @@ export const Employee = ({ employees, onDelete, onEdit }: EmployeeProps) => {
 
   return (
     <Container>
-      <List className="todo-list">
+      <List className="employee-list">
         {employees.map((employee) => (
           <EmployeeCard
             key={employee.id}

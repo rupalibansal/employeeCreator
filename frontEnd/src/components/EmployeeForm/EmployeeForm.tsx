@@ -12,30 +12,38 @@ import {
   FormControlLabel,
   Checkbox,
   Box,
-  CssBaseline,
-  GlobalStyles,
   FormControl,
   InputLabel,
   Select,
   MenuItem,
-  SelectChangeEvent,
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import {
   createEmployee,
   Department,
   getAllDepartments,
+  getEmployeeById,
+  updateEmployeeById,
 } from "../../services/employee-services";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 const EmployeeForm = () => {
   const navigate = useNavigate();
-
+  const { id } = useParams() as { id: string };
   const [departments, setDepartments] = useState<Department[]>([]);
-  const [departmentId, setDepartmentId] = useState<number>(1);
   useEffect(() => {
     getAllDepartments().then((data) => setDepartments(data));
   }, []);
+
+  useEffect(() => {
+    getEmployeeById(Number(id))
+      .then((data) => {
+        console.log("Employee Data", data);
+        const date = new Date(data.startDate);
+        reset({ ...data, startDate: date.toISOString().split("T")[0] });
+      })
+      .catch((e) => console.log(e));
+  }, [id]);
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -52,7 +60,7 @@ const EmployeeForm = () => {
         postalCode: "",
         state: "",
       },
-      department: "",
+      department_id: 1,
       startDate: "",
       isPermanent: false,
     },
@@ -61,14 +69,29 @@ const EmployeeForm = () => {
   console.log("Form State", form);
   const { errors, isSubmitSuccessful } = formState;
 
-  const handleDepartmentChange = (event: SelectChangeEvent<number>) => {
-    setDepartmentId(event.target.value as number);
-  };
+  // List of Australian states
+  const australianStates = [
+    "New South Wales",
+    "Victoria",
+    "Queensland",
+    "South Australia",
+    "Western Australia",
+    "Tasmania",
+    "Northern Territory",
+  ];
+
   const onSubmit = (data: EmployeeFormValues) => {
     console.log("Form Submitted", data);
-    createEmployee(data)
-      .then(() => navigate("/"))
-      .catch((e) => console.log(e));
+    if (id) {
+      // Edit Employee
+      updateEmployeeById(Number(id), data)
+        .then(() => navigate("/"))
+        .catch((e) => console.log(e));
+    } else {
+      createEmployee(data)
+        .then(() => navigate("/"))
+        .catch((e) => console.log(e));
+    }
   };
 
   useEffect(() => {
@@ -80,17 +103,6 @@ const EmployeeForm = () => {
 
   return (
     <>
-      <CssBaseline />
-      <GlobalStyles
-        styles={{
-          body: {
-            background: "linear-gradient(to bottom, #6a1b9a, #ffffff)",
-            minHeight: "100vh",
-            margin: 0,
-            padding: 0,
-          },
-        }}
-      />
       <Container
         maxWidth="md"
         sx={{
@@ -130,6 +142,11 @@ const EmployeeForm = () => {
                   {...register("firstName")}
                   error={!!errors.firstName}
                   helperText={errors.firstName?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Middle Name (if applicable)"
@@ -137,6 +154,11 @@ const EmployeeForm = () => {
                   {...register("middleName")}
                   error={!!errors.middleName}
                   helperText={errors.middleName?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Last Name"
@@ -144,6 +166,11 @@ const EmployeeForm = () => {
                   {...register("lastName")}
                   error={!!errors.lastName}
                   helperText={errors.lastName?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <Typography
                   variant="h6"
@@ -158,6 +185,11 @@ const EmployeeForm = () => {
                   {...register("email")}
                   error={!!errors.email}
                   helperText={errors.email?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Phone Number"
@@ -165,6 +197,11 @@ const EmployeeForm = () => {
                   {...register("phoneNumber")}
                   error={!!errors.phoneNumber}
                   helperText={errors.phoneNumber?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Street Address"
@@ -172,6 +209,11 @@ const EmployeeForm = () => {
                   {...register("address.streetAddress")}
                   error={!!errors.address?.streetAddress}
                   helperText={errors.address?.streetAddress?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Suburb"
@@ -179,6 +221,11 @@ const EmployeeForm = () => {
                   {...register("address.suburb")}
                   error={!!errors.address?.suburb}
                   helperText={errors.address?.suburb?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <TextField
                   label="Postal Code"
@@ -186,14 +233,43 @@ const EmployeeForm = () => {
                   {...register("address.postalCode")}
                   error={!!errors.address?.postalCode}
                   helperText={errors.address?.postalCode?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
-                <TextField
-                  label="State"
-                  size="small"
-                  {...register("address.state")}
-                  error={!!errors.address?.state}
-                  helperText={errors.address?.state?.message}
-                />
+                <FormControl fullWidth margin="normal">
+                  <InputLabel id="state-label">State</InputLabel>
+                  <Controller
+                    name="address.state"
+                    control={control}
+                    defaultValue=""
+                    render={({ field }) => (
+                      <Select
+                        {...field}
+                        labelId="state-label"
+                        value={field.value}
+                        onChange={(event) => {
+                          field.onChange(event);
+                        }}
+                        error={!!errors.address?.state}
+                        label="State"
+                      >
+                        {australianStates.map((state) => (
+                          <MenuItem key={state} value={state}>
+                            {state}
+                          </MenuItem>
+                        ))}
+                      </Select>
+                    )}
+                  />
+                  {errors.address?.state && (
+                    <Typography variant="body2" color="error">
+                      {errors.address?.state?.message}
+                    </Typography>
+                  )}
+                </FormControl>
                 <Typography
                   variant="h6"
                   component="h2"
@@ -232,13 +308,7 @@ const EmployeeForm = () => {
                     </Typography>
                   )}
                 </FormControl>
-                {/* <TextField
-                  label="Department"
-                  size="small"
-                  {...register("department")}
-                  error={!!errors.department}
-                  helperText={errors.department?.message}
-                /> */}
+
                 <TextField
                   label="Start Date"
                   size="small"
@@ -247,6 +317,11 @@ const EmployeeForm = () => {
                   {...register("startDate")}
                   error={!!errors.startDate}
                   helperText={errors.startDate?.message}
+                  fullWidth
+                  margin="normal"
+                  InputLabelProps={{
+                    shrink: true,
+                  }}
                 />
                 <FormControlLabel
                   control={<Checkbox {...register("isPermanent")} />}

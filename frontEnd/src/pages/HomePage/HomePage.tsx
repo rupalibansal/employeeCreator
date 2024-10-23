@@ -6,6 +6,7 @@ import {
 } from "../../services/employee-services";
 import { useNavigate } from "react-router-dom";
 import { Employee } from "../../components/Employee/Employee";
+import { Box, Button, Typography } from "@mui/material";
 
 export const HomePage = () => {
   const [employees, setEmployees] = useState<EmployeeDetails[]>([]);
@@ -34,20 +35,50 @@ export const HomePage = () => {
     navigate("/employee/edit/" + id);
   };
 
+  const commonStyles = {
+    width: "100%",
+    textAlign: "center",
+    background: "linear-gradient(to right, #e1b6e3, white)",
+    padding: "0.5em 0",
+    fontWeight: "bold",
+    fontFamily: '"Roboto", "Helvetica", "Arial", "sans-serif"',
+    color: "rgb(142, 33, 166)",
+    margin: 0,
+    boxShadow: "0 2px 4px rgba(0, 0, 0, 0.1)",
+    fontSize: "1.8em",
+  };
+
   return (
-    <div className="container">
-      <h1 className="highlighted-heading">
+    <Box className="container">
+      <Typography
+        variant="h4"
+        className="highlighted-heading"
+        sx={commonStyles}
+      >
         Welcome to Employee Management App!
-      </h1>
-      <div>
-        <button
-          className="create-employee-button"
+      </Typography>
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          marginTop: "20px", // Add some space between the heading and the button
+        }}
+      >
+        <Button
           onClick={handleCreateEmployee}
-          style={{ marginRight: "10px" }}
+          variant="contained"
+          sx={{
+            backgroundColor: "#6a1b9a",
+            color: "#ffffff",
+            "&:hover": { backgroundColor: "#4a148c" },
+            border: "2px solid #ffffff",
+            boxShadow: "0px 4px 6px rgba(0, 0, 0, 0.1)",
+          }}
         >
           Create Employee
-        </button>
-      </div>
+        </Button>
+      </Box>
 
       {/* <div className="department-pills">
         <Box
@@ -88,7 +119,9 @@ export const HomePage = () => {
       </div> */}
 
       <div className="employee-container">
-        {employees.length === 0 && <h2>No Employees Found</h2>}
+        {employees.length === 0 && (
+          <Typography variant="h2">No Employees Found</Typography>
+        )}
         {employees && (
           <Employee
             employees={employees}
@@ -97,6 +130,6 @@ export const HomePage = () => {
           />
         )}
       </div>
-    </div>
+    </Box>
   );
 };

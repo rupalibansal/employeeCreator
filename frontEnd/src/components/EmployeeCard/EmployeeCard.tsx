@@ -1,7 +1,6 @@
 import React from "react";
-import { Card, CardContent, Typography, IconButton, Box } from "@mui/material";
-import EditIcon from "@mui/icons-material/Edit";
-import DeleteIcon from "@mui/icons-material/Delete";
+import { Card, CardContent, Typography, Box, Button } from "@mui/material";
+
 import { EmployeeDetails } from "../../services/employee-services";
 
 interface EmployeeCardProps {
@@ -21,6 +20,11 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
 
   const handleEdit = async () => {
     await onEdit(employee.id);
+  };
+
+  const buttonStyles = {
+    color: "#6a1b9a", // Purple color for both buttons
+    "&:hover": { color: "#4a148c" }, // Darker shade on hover
   };
 
   return (
@@ -62,17 +66,12 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
             </Box>
           </Box>
           <Box>
-            <IconButton
-              edge="end"
-              aria-label="delete"
-              color="error"
-              onClick={handleDelete}
-            >
-              <DeleteIcon />
-            </IconButton>
-            <IconButton edge="end" aria-label="edit">
-              <EditIcon onClick={handleEdit} />
-            </IconButton>
+            <Button variant="text" onClick={handleEdit} sx={buttonStyles}>
+              EDIT
+            </Button>
+            <Button variant="text" onClick={handleDelete} sx={buttonStyles}>
+              DELETE
+            </Button>
           </Box>
         </Box>
       </CardContent>

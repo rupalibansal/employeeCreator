@@ -17,6 +17,8 @@ import lombok.ToString;
 
 @Entity
 @Table(name = "address_details")
+@Data
+@ToString
 
 public class Address {
     @Id
