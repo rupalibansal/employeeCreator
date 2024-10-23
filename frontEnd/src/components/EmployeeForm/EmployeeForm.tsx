@@ -31,19 +31,6 @@ const EmployeeForm = () => {
   const navigate = useNavigate();
   const { id } = useParams() as { id: string };
   const [departments, setDepartments] = useState<Department[]>([]);
-  useEffect(() => {
-    getAllDepartments().then((data) => setDepartments(data));
-  }, []);
-
-  useEffect(() => {
-    getEmployeeById(Number(id))
-      .then((data) => {
-        console.log("Employee Data", data);
-        const date = new Date(data.startDate);
-        reset({ ...data, startDate: date.toISOString().split("T")[0] });
-      })
-      .catch((e) => console.log(e));
-  }, [id]);
 
   const form = useForm<EmployeeFormValues>({
     resolver: zodResolver(employeeSchema),
@@ -69,6 +56,23 @@ const EmployeeForm = () => {
   console.log("Form State", form);
   const { errors, isSubmitSuccessful } = formState;
 
+  useEffect(() => {
+    getAllDepartments().then((data) => setDepartments(data));
+  }, []);
+
+  useEffect(() => {
+    getEmployeeById(Number(id))
+      .then((data) => {
+        console.log("Employee Data", data);
+        const date = new Date(data.startDate);
+        reset({
+          ...data,
+          startDate: date.toISOString().split("T")[0],
+          department_id: data.department.id,
+        } as EmployeeFormValues);
+      })
+      .catch((e) => console.log(e));
+  }, [id, reset]);
   // List of Australian states
   const australianStates = [
     "New South Wales",
@@ -125,7 +129,7 @@ const EmployeeForm = () => {
                 textAlign: "right",
               }}
             >
-              Employee Details
+              {id ? "Update Employee Details" : "Create Employee"}
             </Typography>
             <form onSubmit={handleSubmit(onSubmit)} noValidate>
               <Stack spacing={2}>
@@ -282,7 +286,6 @@ const EmployeeForm = () => {
                   <Controller
                     name="department_id"
                     control={control}
-                    defaultValue={1}
                     render={({ field }) => (
                       <Select
                         {...field}
@@ -324,9 +327,16 @@ const EmployeeForm = () => {
                   }}
                 />
                 <FormControlLabel
-                  control={<Checkbox {...register("isPermanent")} />}
+                  control={
+                    <Checkbox
+                      {...register("isPermanent")}
+                      checked={form.watch("isPermanent")}
+                    />
+                  }
                   label="Permanent"
                 />
+                {errors.isPermanent && <p>{errors.isPermanent.message}</p>}
+
                 <Box
                   sx={{
                     display: "flex",
@@ -342,19 +352,21 @@ const EmployeeForm = () => {
                       "&:hover": { backgroundColor: "#4a148c" },
                     }}
                   >
-                    Submit
+                    {id ? "Update" : "Create"}
                   </Button>
-                  <Button
-                    type="button"
-                    variant="contained"
-                    onClick={() => reset()}
-                    sx={{
-                      backgroundColor: "#6a1b9a",
-                      "&:hover": { backgroundColor: "#4a148c" },
-                    }}
-                  >
-                    Reset
-                  </Button>
+                  {!id && (
+                    <Button
+                      type="button"
+                      variant="contained"
+                      onClick={() => reset()}
+                      sx={{
+                        backgroundColor: "#6a1b9a",
+                        "&:hover": { backgroundColor: "#4a148c" },
+                      }}
+                    >
+                      Reset
+                    </Button>
+                  )}
                 </Box>
               </Stack>
             </form>

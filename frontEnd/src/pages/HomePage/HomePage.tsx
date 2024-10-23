@@ -4,23 +4,47 @@ import {
   getAllEmployees,
   EmployeeDetails,
 } from "../../services/employee-services";
+import "./HomePage.css";
 import { useNavigate } from "react-router-dom";
 import { Employee } from "../../components/Employee/Employee";
 import { Box, Button, Typography } from "@mui/material";
+import { getDepartmentColor } from "../../utils/utils";
 
 export const HomePage = () => {
   const [employees, setEmployees] = useState<EmployeeDetails[]>([]);
+  const [departments, setDepartments] = useState<string[]>([]);
+  const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
+    null
+  );
+  const employees1 = employees as unknown as object[any];
+
   useEffect(() => {
     getAllEmployees()
       .then((data) => setEmployees(data.employees))
       .catch((e) => console.log(e));
   }, []);
 
+  // Get all departments from the employees
+  useEffect(() => {
+    console.log("Employees", employees);
+    const departments = employees1.map(
+      (employee) => employee.department.departmentName
+    );
+    const uniqueDepartments = Array.from(new Set(departments));
+    setDepartments(uniqueDepartments);
+  }, [employees]);
+
   const navigate = useNavigate();
 
   const handleCreateEmployee = () => {
     navigate("/employee/new");
   };
+
+  const filteredEmployees = selectedDepartment
+    ? employees1.filter(
+        (emp) => emp.department.departmentName === selectedDepartment
+      )
+    : employees1;
 
   const handleDelete = async (id: number) => {
     const confirmed = confirm("Are you sure?");
@@ -33,6 +57,12 @@ export const HomePage = () => {
 
   const handleEdit = async (id: number) => {
     navigate("/employee/edit/" + id);
+  };
+
+  const handleDepartmentClick = (department: string | null) => {
+    setSelectedDepartment(
+      department === selectedDepartment ? null : department
+    );
   };
 
   const commonStyles = {
@@ -80,7 +110,7 @@ export const HomePage = () => {
         </Button>
       </Box>
 
-      {/* <div className="department-pills">
+      <div className="department-pills">
         <Box
           sx={{
             backgroundColor: "#9e9e9e", // Grey for "All" category
@@ -97,12 +127,13 @@ export const HomePage = () => {
             All
           </Typography>
         </Box>
-        {uniqueDepartments.map((department) => (
+        {departments.map((department) => (
           <Box
             key={department}
             sx={{
               backgroundColor: getDepartmentColor(department),
               color: "white",
+              fontWeight: "bold",
               padding: "2px 8px",
               borderRadius: "12px",
               display: "inline-block",
@@ -116,7 +147,7 @@ export const HomePage = () => {
             </Typography>
           </Box>
         ))}
-      </div> */}
+      </div>
 
       <div className="employee-container">
         {employees.length === 0 && (
@@ -124,7 +155,7 @@ export const HomePage = () => {
         )}
         {employees && (
           <Employee
-            employees={employees}
+            employees={filteredEmployees}
             onDelete={handleDelete}
             onEdit={handleEdit}
           />

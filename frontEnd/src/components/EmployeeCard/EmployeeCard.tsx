@@ -48,22 +48,9 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
             <Typography variant="h6" component="h2">
               {employee.email}
             </Typography>
-          </Box>
-          <Box display="flex" alignItems="center">
-            <Box
-              sx={{
-                // backgroundColor: getDepartmentColor(employee.name),
-                color: "white",
-                padding: "2px 8px",
-                borderRadius: "12px",
-                display: "inline-block",
-                marginLeft: 1,
-              }}
-            >
-              <Typography variant="subtitle2" component="h2">
-                {employee.firstName}
-              </Typography>
-            </Box>
+            <Typography variant="h6" component="h2">
+              {employee.department.departmentName}
+            </Typography>
           </Box>
           <Box>
             <Button variant="text" onClick={handleEdit} sx={buttonStyles}>

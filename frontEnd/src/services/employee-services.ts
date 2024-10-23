@@ -63,7 +63,7 @@ export const getEmployeeById = async (id: number) => {
     }
     throw new Error("Something went wrong");
   }
-  return (await response.json()) as EmployeeFormValues;
+  return await response.json();
 };
 
 export const getEmployeeByDepartment = async (department: string) => {
