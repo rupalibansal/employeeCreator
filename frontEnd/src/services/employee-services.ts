@@ -1,5 +1,5 @@
 import { EmployeeFormValues } from "../components/EmployeeForm/employeeSchema";
-const baseURL = import.meta.env.VITE_APP_API_BASE_URL;
+const baseURL = "http://localhost:8081";
 
 export interface Address {
   id: number;
@@ -22,7 +22,7 @@ export interface EmployeeDetails {
   email: string;
   phoneNumber: string;
   address: Address;
-  department_id: Department;
+  department: Department;
   startDate: string;
   isPermanent: boolean;
 }
@@ -39,9 +39,7 @@ export const getAllEmployees = async () => {
     if (!response.ok) {
       throw new Error(`Failed to fetch data :${response.statusText}`);
     }
-    return (await response.json()) as {
-      employees: EmployeeDetails[];
-    };
+    return await response.json();
   } catch (error) {
     console.error(error);
     throw new Error("Failed to fetch data");

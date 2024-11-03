@@ -2,6 +2,7 @@ import { Container, List } from "@mui/material";
 import EmployeeCard from "../EmployeeCard/EmployeeCard";
 import "./Employee.css";
 import { EmployeeDetails } from "../../services/employee-services";
+import React from "react";
 
 interface EmployeeProps {
   employees: EmployeeDetails[];

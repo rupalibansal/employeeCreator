@@ -9,6 +9,7 @@ import { useNavigate } from "react-router-dom";
 import { Employee } from "../../components/Employee/Employee";
 import { Box, Button, Typography } from "@mui/material";
 import { getDepartmentColor } from "../../utils/utils";
+import React from "react";
 
 export const HomePage = () => {
   const [employees, setEmployees] = useState<EmployeeDetails[]>([]);
@@ -16,7 +17,7 @@ export const HomePage = () => {
   const [selectedDepartment, setSelectedDepartment] = useState<string | null>(
     null
   );
-  const employees1 = employees as unknown as object[any];
+  const employees1 = employees;
 
   useEffect(() => {
     getAllEmployees()
@@ -31,7 +32,7 @@ export const HomePage = () => {
       (employee) => employee.department.departmentName
     );
     const uniqueDepartments = Array.from(new Set(departments));
-    setDepartments(uniqueDepartments);
+    setDepartments(uniqueDepartments as string[]);
   }, [employees]);
 
   const navigate = useNavigate();
@@ -92,7 +93,7 @@ export const HomePage = () => {
           display: "flex",
           justifyContent: "center",
           alignItems: "center",
-          marginTop: "20px", // Add some space between the heading and the button
+          marginTop: "20px",
         }}
       >
         <Button
@@ -113,7 +114,7 @@ export const HomePage = () => {
       <div className="department-pills">
         <Box
           sx={{
-            backgroundColor: "#9e9e9e", // Grey for "All" category
+            backgroundColor: "#9e9e9e",
             color: "white",
             padding: "2px 8px",
             borderRadius: "12px",
@@ -130,6 +131,7 @@ export const HomePage = () => {
         {departments.map((department) => (
           <Box
             key={department}
+            data-testid={department + "-department-pill"}
             sx={{
               backgroundColor: getDepartmentColor(department),
               color: "white",

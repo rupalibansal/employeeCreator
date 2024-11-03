@@ -40,7 +40,7 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
         <Box display="flex" justifyContent="space-between" alignItems="center">
           <Box sx={{ marginBottom: 2 }}>
             <Typography variant="h6" component="h2" sx={{ fontWeight: "bold" }}>
-              {employee.firstName}
+              {employee.firstName} {employee.lastName}
             </Typography>
             <Typography variant="h6" component="h2">
               {employee.isPermanent ? "Permanent" : "Contract"}
@@ -53,10 +53,20 @@ const EmployeeCard: React.FC<EmployeeCardProps> = ({
             </Typography>
           </Box>
           <Box>
-            <Button variant="text" onClick={handleEdit} sx={buttonStyles}>
+            <Button
+              data-testid={employee.firstName + "-EDIT"}
+              variant="text"
+              onClick={handleEdit}
+              sx={buttonStyles}
+            >
               EDIT
             </Button>
-            <Button variant="text" onClick={handleDelete} sx={buttonStyles}>
+            <Button
+              data-testid={employee.firstName + "-DELETE"}
+              variant="text"
+              onClick={handleDelete}
+              sx={buttonStyles}
+            >
               DELETE
             </Button>
           </Box>
