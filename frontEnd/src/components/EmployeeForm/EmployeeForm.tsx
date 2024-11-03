@@ -93,6 +93,7 @@ const EmployeeForm = () => {
         .then(() => navigate("/"))
         .catch((e) => console.log(e));
     } else {
+      console.log("Hello WSorldppppp");
       createEmployee(data)
         .then(() => navigate("/"))
         .catch((e) => console.log(e));
@@ -102,7 +103,7 @@ const EmployeeForm = () => {
   useEffect(() => {
     if (isSubmitSuccessful) {
       reset();
-      alert("Form Submitted Successfully");
+      // alert("Form Submitted Successfully");
     }
   }, [isSubmitSuccessful, reset]);
 
@@ -317,15 +318,12 @@ const EmployeeForm = () => {
                   label="Start Date"
                   size="small"
                   type="date"
-                  InputLabelProps={{ shrink: true }}
                   {...register("startDate")}
                   error={!!errors.startDate}
                   helperText={errors.startDate?.message}
                   fullWidth
                   margin="normal"
-                  InputLabelProps={{
-                    shrink: true,
-                  }}
+                  InputLabelProps={{ shrink: true }}
                 />
                 <FormControlLabel
                   control={

@@ -42,10 +42,14 @@ describe("HomePage", () => {
     await waitFor(() => {
       expect(screen.queryByText("Engineering")).toBeInTheDocument();
     });
-    const engineeringPill = screen.findByTestId(`Engineering-department-pill`);
-    const marketingPill = screen.findByTestId(`Marketing-department-pill`);
-    expect(await engineeringPill).toBeInTheDocument();
-    expect(await marketingPill).toBeInTheDocument();
+    const engineeringPill = await screen.findByTestId(
+      `Engineering-department-pill`
+    );
+    const marketingPill = await screen.findByTestId(
+      `Marketing-department-pill`
+    );
+    expect(engineeringPill).toBeInTheDocument();
+    expect(marketingPill).toBeInTheDocument();
   });
 
   test("validate that all the fields are displayed correctly", async () => {
@@ -86,13 +90,12 @@ describe("HomePage", () => {
 
     fireEvent.click(engineeringPill);
 
-    screen.debug();
+    // screen.debug();
     await waitFor(() => {
       expect(screen.queryByText("Jane Smith")).toBeInTheDocument();
     });
   });
 
-  // validate that clicking on delete button removes the employee from the list
   test("validate that clicking on delete button removes the employee from the list", async () => {
     render(
       <Router>
