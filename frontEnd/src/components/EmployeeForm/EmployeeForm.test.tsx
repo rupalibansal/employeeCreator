@@ -32,16 +32,16 @@ const mockEmployee = {
   firstName: "John",
   middleName: "A",
   lastName: "Doe",
-  email: "john.doe@example.com",
-  phoneNumber: "1234567890",
+  email: "john.doe@luxethreads.com",
+  phoneNumber: "0435090867",
   address: {
     streetAddress: "123 Main St",
     suburb: "Suburbia",
-    postalCode: "12345",
+    postalCode: "1234",
     state: "New South Wales",
   },
   department: { id: 1, departmentName: "Engineering" },
-  startDate: "2022-01-01",
+  startDate: "2024-11-05",
   isPermanent: true,
 };
 
@@ -78,7 +78,8 @@ describe("EmployeeForm", () => {
     });
   });
 
-  test("submits the form data correctly", async () => {
+  test.only("submits the form data correctly", async () => {
+    (getAllDepartments as jest.Mock).mockResolvedValue(mockDepartments);
     (useParams as jest.Mock).mockReturnValue({ id: null });
     (createEmployee as jest.Mock).mockResolvedValue({});
     render(
@@ -89,14 +90,18 @@ describe("EmployeeForm", () => {
     fireEvent.change(screen.getByLabelText("First Name"), {
       target: { value: "Jane" },
     });
+    fireEvent.change(screen.getByLabelText("Middle Name (if applicable)"), {
+      target: { value: "" },
+    });
+
     fireEvent.change(screen.getByLabelText("Last Name"), {
       target: { value: "Smith" },
     });
     fireEvent.change(screen.getByLabelText("Email"), {
-      target: { value: "jane.smith@example.com" },
+      target: { value: "jane.smith@luxethreads.com" },
     });
     fireEvent.change(screen.getByLabelText("Phone Number"), {
-      target: { value: "0987654321" },
+      target: { value: "0435080342" },
     });
     fireEvent.change(screen.getByLabelText("Street Address"), {
       target: { value: "456 Another St" },
@@ -105,46 +110,81 @@ describe("EmployeeForm", () => {
       target: { value: "Another Suburb" },
     });
     fireEvent.change(screen.getByLabelText("Postal Code"), {
-      target: { value: "54321" },
+      target: { value: "5432" },
     });
-    fireEvent.mouseDown(screen.getByLabelText("State"));
-    fireEvent.click(screen.getByText("Victoria"));
+    const stateDropdown = screen.getByLabelText("State");
+    expect(stateDropdown).toBeInTheDocument();
+    fireEvent.mouseDown(stateDropdown);
+    fireEvent.click(screen.getByText("Tasmania"));
 
-    await waitFor(() => {
-      expect(screen.getByLabelText("Department")).toBeInTheDocument();
-    });
-
-    fireEvent.mouseDown(screen.getByLabelText("Department"));
-    fireEvent.click(screen.getByText("Marketing"));
+    const departmentDropdown = screen.getByLabelText("Department");
+    expect(departmentDropdown).toBeInTheDocument();
+    fireEvent.mouseDown(departmentDropdown);
+    fireEvent.click(
+      screen.getByText((content) => content.includes("Engineering"))
+    );
 
     fireEvent.change(screen.getByLabelText("Start Date"), {
-      target: { value: "2022-02-01" },
+      target: { value: "2024-11-05" },
     });
     fireEvent.click(screen.getByLabelText("Permanent"));
 
-    window.confirm = jest.fn(() => true);
+    fireEvent.submit(screen.getByRole("button", { name: /Create/i }));
 
-    fireEvent.click(screen.getByText("Create"));
-
-    // screen.debug(undefined, 20000);
+    screen.debug(undefined, 20000);
 
     await waitFor(() => {
       expect(createEmployee).toHaveBeenCalledWith({
         firstName: "Jane",
         middleName: "",
         lastName: "Smith",
-        email: "jane.smith@example.com",
+        email: "jane.smith@luxethreads.com",
         phoneNumber: "0987654321",
         address: {
           streetAddress: "456 Another St",
           suburb: "Another Suburb",
-          postalCode: "54321",
-          state: "Victoria",
+          postalCode: "5432",
+          state: "New South Wales",
         },
         department_id: 2,
-        startDate: "2022-02-01",
+        startDate: "2024-11-05",
         isPermanent: true,
       });
+    });
+  });
+
+  test("loads employee data when editing an exiting employee", async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
+    render(
+      <Router>
+        <EmployeeForm />
+      </Router>
+    );
+
+    await waitFor(() => {
+      screen.debug(undefined, 20000);
+      expect(screen.getByLabelText(/First Name/i)).toHaveValue("John");
+      expect(screen.getByLabelText(/Middle Name/i)).toHaveValue("A");
+      expect(screen.getByLabelText(/Last Name/i)).toHaveValue("Doe");
+      expect(screen.getByLabelText(/Email/i)).toHaveValue(
+        "john.doe@luxethreads.com"
+      );
+      expect(screen.getByLabelText(/Phone Number/i)).toHaveValue("0435090867");
+      expect(screen.getByLabelText(/Street Address/i)).toHaveValue(
+        "123 Main St"
+      );
+      expect(screen.getByLabelText(/Suburb/i)).toHaveValue("Suburbia");
+      expect(screen.getByLabelText(/Postal Code/i)).toHaveValue("1234");
+      // screen.debug(undefined, 20000);
+      const stateDropdown = screen.getByLabelText("State");
+      expect(stateDropdown).toBeInTheDocument();
+      expect(stateDropdown).toHaveTextContent("New South Wales");
+      const departmentDropdown = screen.getByLabelText("Department");
+      expect(departmentDropdown).toBeInTheDocument();
+      expect(departmentDropdown).toHaveTextContent("Engineering");
+
+      expect(screen.getByLabelText(/Start Date/i)).toHaveValue("2024-11-05");
+      expect(screen.getByLabelText(/Permanent/i)).toBeChecked();
     });
   });
 });
