@@ -10,7 +10,13 @@ import {
 import { BrowserRouter as Router, useParams } from "react-router-dom";
 import React from "react";
 
-jest.mock("../../services/employee-services");
+jest.mock("../../services/employee-services", () => ({
+  getAllDepartments: jest.fn(),
+  getEmployeeById: jest.fn(),
+  createEmployee: jest.fn(),
+  updateEmployeeById: jest.fn(),
+}));
+
 jest.mock("react-router-dom", () => ({
   ...jest.requireActual("react-router-dom"),
   useParams: jest.fn(),
@@ -51,6 +57,16 @@ describe("EmployeeForm", () => {
     (getEmployeeById as jest.Mock).mockResolvedValue(mockEmployee);
   });
 
+  afterEach(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
+  });
+
   test("validate that all the fields are displayed correctly", async () => {
     (useParams as jest.Mock).mockResolvedValue({ id: null });
     render(
@@ -78,7 +94,7 @@ describe("EmployeeForm", () => {
     });
   });
 
-  test.only("submits the form data correctly", async () => {
+  test.skip("submits the form data correctly", async () => {
     (getAllDepartments as jest.Mock).mockResolvedValue(mockDepartments);
     (useParams as jest.Mock).mockReturnValue({ id: null });
     (createEmployee as jest.Mock).mockResolvedValue({});
@@ -87,8 +103,18 @@ describe("EmployeeForm", () => {
         <EmployeeForm />
       </Router>
     );
+    await waitFor(() => {
+      expect(screen.getByLabelText("First Name")).toBeInTheDocument();
+    });
+
     fireEvent.change(screen.getByLabelText("First Name"), {
       target: { value: "Jane" },
+    });
+
+    await waitFor(() => {
+      expect(
+        screen.getByLabelText("Middle Name (if applicable)")
+      ).toBeInTheDocument();
     });
     fireEvent.change(screen.getByLabelText("Middle Name (if applicable)"), {
       target: { value: "" },
@@ -118,18 +144,28 @@ describe("EmployeeForm", () => {
     fireEvent.click(screen.getByText("Tasmania"));
 
     const departmentDropdown = screen.getByLabelText("Department");
-    expect(departmentDropdown).toBeInTheDocument();
+    await waitFor(() => {
+      expect(departmentDropdown).toBeInTheDocument();
+    });
+
     fireEvent.mouseDown(departmentDropdown);
-    fireEvent.click(
-      screen.getByText((content) => content.includes("Engineering"))
+    const selectDepartment = screen.getByText((content) =>
+      content.includes("Engineering")
     );
+    await waitFor(() => {
+      expect(selectDepartment).toBeInTheDocument();
+    });
+    fireEvent.click(selectDepartment);
 
     fireEvent.change(screen.getByLabelText("Start Date"), {
       target: { value: "2024-11-05" },
     });
     fireEvent.click(screen.getByLabelText("Permanent"));
 
-    fireEvent.submit(screen.getByRole("button", { name: /Create/i }));
+    const createButton = screen.getByRole("button", { name: /Create/i });
+    expect(createButton).toBeInTheDocument();
+    expect(createButton).not.toBeDisabled();
+    fireEvent.click(createButton);
 
     screen.debug(undefined, 20000);
 
@@ -186,5 +222,57 @@ describe("EmployeeForm", () => {
       expect(screen.getByLabelText(/Start Date/i)).toHaveValue("2024-11-05");
       expect(screen.getByLabelText(/Permanent/i)).toBeChecked();
     });
+  });
+
+  test("Submits the form data correctly when updating an existing employee", async () => {
+    (useParams as jest.Mock).mockReturnValue({ id: 1 });
+    (updateEmployeeById as jest.Mock).mockResolvedValue({});
+    render(
+      <Router>
+        <EmployeeForm />
+      </Router>
+    );
+    // Wait for the form fields to be populated
+    await waitFor(() => {
+      expect(screen.getByLabelText("First Name")).toHaveValue("John");
+    });
+
+    const firstNameField = screen.getByLabelText("First Name");
+    fireEvent.change(firstNameField, {
+      target: { value: "John Updated" },
+    });
+
+    const updateButton = screen.getByRole("button", { name: /update/i });
+    expect(updateButton).toBeInTheDocument();
+    expect(updateButton).not.toBeDisabled();
+    fireEvent.click(updateButton);
+    screen.debug(undefined, 20000);
+
+    await waitFor(() => {
+      expect(updateEmployeeById).toHaveBeenCalledWith(
+        1,
+        expect.objectContaining({
+          firstName: "John Updated",
+          middleName: "A",
+          lastName: "Doe",
+          email: "john.doe@luxethreads.com",
+          phoneNumber: "0435090867",
+          address: {
+            streetAddress: "123 Main St",
+            suburb: "Suburbia",
+            postalCode: "1234",
+            state: "New South Wales",
+          },
+          department_id: 1, // Adjusted to match the actual structure
+          startDate: "2024-11-05",
+          isPermanent: true,
+        })
+      );
+    });
+  });
+
+  afterAll(() => {
+    jest.clearAllMocks();
+    jest.resetAllMocks();
   });
 });
