@@ -24,7 +24,7 @@ jobs:
         uses: actions/cache@v2
         with:
           path: node_modules
-          key: node-modules-${{ runner.os }}-${{ hashFiles('**/package.json') }}
+          key: node-modules-${{ runner.os }}-${{ hashFiles('**/frontEnd/package.json') }}
           restore-keys: |
             node-modules-${{ runner.os }}-
 
